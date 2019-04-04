@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta charset="utf-8">
+    <link rel='stylesheet' type='text/css' href='/static/bootstrap-3.3.1-dist/css/bootstrap.min.css' >
+    <title>统计</title>
+    <style>
+    		body {
+    			padding: 30px 100px;
+    		}
+    		
+    		li,table th,td {
+		 	text-align: center;
+		} 
+		
+		.div-left {
+			margin-top: 35px;
+		}
+    </style>
+    
+</head>
+	<body>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-lg-2 div-left">
+					<ul>
+						#foreach($item in $!airports)
+							<li class="list-group-item"><a href="/vm/trip/qpm?airport=$!item">$!item</a></li>
+			            #end
+					</ul>
+				</div>
+				<div class="col-lg-10">
+					
+					<table class="table">
+						<thead>
+							<tr>
+								
+								<th colspan=7>$!airport
+										/ $!aptStatList.size()
+										/ $!fltCount
+										/ $!totalCount
+								</th>
+							
+								<!--
+								<th colspan=7>$!airport
+									#if($!aptStatList.size() > 0) 
+										/ $!aptStatList.size()
+									#end
+									#if($!fltCount > 0) 
+										/ $!fltCount
+									#end
+									#if($!totalCount > 0) 
+										/ $!totalCount
+									#end
+								</th>
+								-->
+							</tr>
+							<tr>
+								<th>FNUM</th>
+								<th>FDST</th>
+								<th>LAST_QUERY_TIME</th>
+								<th>INTERVAL</th>
+								<th>SUCCESS</th>
+								<th>FAILURE</th>
+								<th>TOTAL</th>
+							</tr>
+						</thead>
+						<tbody>
+							#foreach($item in $aptStatList)
+								<tr class="tr">
+					                <td>$!item.fnum</td>
+					                <td>$!item.fdst</td>
+					                <td class="time">$!item.last_query_time</td>
+					                <td>$!item.interval</td>
+					                <td>$!item.success</td>
+					                <td>$!item.failure</td>
+					                <td>#set($total=$!item.success + $!item.failure)$total</td>
+					            </tr>
+				            #end
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	
+		#[[
+		<script src='/static/bootstrap-3.3.1-dist/js/jquery-1.9.1.min.js' ></script>	
+		<script type="text/javascript">
+			var unixToDate =  function(unixTime) {		
+	            var time = new Date((unixTime + 8 * 60 * 60)* 1000);
+	            var ymdhis = "";
+	            ymdhis += time.getUTCFullYear() + "-";
+	            ymdhis += ((time.getUTCMonth() + 1) < 10 ? '0' + (time.getUTCMonth() + 1) : (time.getUTCMonth() + 1) ) + "-";
+	            ymdhis += (time.getUTCDate() < 10 ? '0' + time.getUTCDate() : time.getUTCDate());
+	            ymdhis += "  ";
+	            ymdhis += (time.getUTCHours() < 10 ? '0' + time.getUTCHours() : time.getUTCHours()) + ":";
+	            ymdhis += (time.getUTCMinutes() < 10 ? '0' + time.getUTCMinutes() : time.getUTCMinutes()) + ":";
+	            ymdhis += (time.getUTCSeconds() < 10 ? '0' + time.getUTCSeconds() : time.getUTCSeconds());
+	    
+	            return ymdhis;
+	        }
+	        
+	        var timeProcess = function() {
+		        var trs = $(".tr");
+		        trs.each(function(i) {
+			        	var tr = $(trs[i]);
+			        	var tds1 = tr.find(".time");
+			        	tds1.each(function(j){
+			        		var td1 = $(tds1[j]);
+			        		if(!isNaN(td1.text())){
+			        			td1.html(unixToDate(parseInt(td1.text())));
+			        		}
+			        	});
+		        });
+	        }
+	        
+	        timeProcess();
+		</script>		
+		]]#
+	</body>	
+</html>
